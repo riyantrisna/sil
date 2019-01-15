@@ -1,0 +1,160 @@
+company
+- company_id
+- company_name
+- company_address
+- company_refcity_id ref_city > refcity_id
+- company_phone
+- company_pay_method
+[
+     {id: 1, name: 'Tunai'}, 
+     {id: 2, name: 'Kartu'}, 
+     {id: 2, name: 'Go Pay'}
+]
+- company_charge
+[
+    {charge_id: 1, charge_name: 'PPN', charge_percent: 10},
+     {charge_id: 2, charge_name: 'Biaya Admin', charge_percent: 5}
+]
+- company_rounding (1=Otomatis, 2=Kebawah, 3=keatas, 4=Tanpa Pembulatan)
+- company_status (1=aktif, 0=tidak aktif)
+- insert_datetime
+- insert_user_id
+- update_datetime
+- update_user_id
+
+
+user
+- user_id
+- user_company_id company > company_id
+- user_name
+- user_email
+- user_password
+- user_address (Field Untuk role 4 yaitu pelanggan)
+- user_gender (male or female) (Field Untuk role 4 yaitu pelanggan)
+- user_phone (Field Untuk role 4 yaitu pelanggan)
+- user_last_login
+- user_status (1=aktif, 0=tidak aktif)
+- user_role (1=admin / user utama (semua fitur BO dan Kasir), 2=staf (semua fitur BO dan Kasir), 3=operator (kasir)) *user utama tidak dapat dihapus melalui BO.
+- user_type (1=petugas, 2=pelanggan)
+- user_outlet [25, 26, 27]
+- insert_datetime
+- insert_user_id
+- update_datetime
+- update_user_id
+
+
+outlet
+- outlet_id
+- outlet_company_id company > company_id
+- outlet_name
+- outlet_address
+- outlet_refcity_id ref_city > refcity_id
+- outlet_phone
+- outlet_charge [1, 2]
+- insert_datetime
+- insert_user_id
+- update_datetime
+- update_user_id
+
+
+service
+- service_id
+- service_company_id company > company_id
+- service_servcat_id service_category > servcat_id
+- service_code
+- service_name
+- service_price
+- service_unit
+- service_img
+- service_status (1=aktif, 0=tidak aktif)
+- service_desc
+- insert_datetime
+- insert_user_id
+- update_datetime
+- update_user_id
+
+
+service_category
+- servcat_id
+- servcat_company_id company > company_id
+- servcat_name
+- insert_datetime
+- insert_user_id
+- update_datetime
+- update_user_id
+
+
+transaction
+- transaction_id
+- transaction_company_id company > company_id
+- transaction_company_name
+- transaction_outlet_id outlet > outlet_id
+- transaction_outlet_name
+- transaction_datetime
+- transaction_number
+- transaction_cashier
+- transaction_user_id
+- transaction_user_name
+- transaction_rack_number (Inputan Text)
+- transaction_item
+[
+    {item_name: 'Cuci Kiloan', item_price: 5000, item_qty : 5, item_discount_type: 1, item_discount: 10, item_subtotal: 25000, item_note: 'baju kuning jangan di strika'},
+     {item_name: 'Dry Clean', item_price: 15000, item_qty : 2, item_discount_type: 2, item_discount: 3000, item_subtotal: 30000, item_note: ' '},
+     {item_name: 'Diskon 50% untuk layanan minimum 5 KG Cuci Kiloan ', item_price: -27500, item_qty : 1, item_discount_type: ' ', item_discount: ' ', item_subtotal: -27500, item_note: ' '}
+]
+- transaction_subtotal
+- transaction_discount_type (1=persen, 2=nominal)
+- transaction_discount
+- transaction_charge 
+[
+    {charge_name: 'PPN', charge_percent: 10, nominal : 2000}, 
+     {charge_name: 'Biaya Admin', charge_percent: 5, nominal : 1000}
+]
+- transaction_pay_method
+[
+     {name: 'Tunai', nominal: 8000}, 
+     {name: 'Kartu', nominal: 50000}
+]
+- transaction_total
+- transaction_status (1=Proses, 2=Dibatalkan, 3=Selesai, 4=Diambil)
+- transaction_desc
+- insert_datetime
+- insert_user_id
+- update_datetime
+- update_user_id
+
+
+promo
+- promo_id
+- promo_company_id company > company_id
+- promo_name (Diskon 50% untuk Transaksi Minimum 10 Cuci Kiloan)
+- promo_type 1= Diskon produk dengan jumlah minnimal N, 2=Diskon dengan minimal transaksi N, 3=Beli A gratis B
+- promo_terms_service_id (syarat pembelian produk)
+- promo_terms_qty (syarat banyak yg harus dibeli)
+- promo_terms_servcat_id (syarat pembelian berdasarkan kategori)
+- promo_free_service_id (gratis produk)
+- promo_free_qty (banyak produk gratis)
+- promo_applies_multiply (1=yes, 0=no) => berlaku kelipatan?
+- promo_discount_type (persen / nominal)
+- promo_discount_value (Nilai dari diskon)
+- promo_start
+- promo_end
+- promo_days [1, 2, 3, 4, 5, 6, 0]
+- promo_time_start
+- promo_time_end
+- promo_outlet [25, 26, 27]
+- promo_status
+- insert_datetime
+- insert_user_id
+- update_datetime
+- update_user_id
+
+
+ref_city
+- refcity_id
+- refcity_code
+- refcity_name
+- insert_datetime
+- insert_user_id
+- update_datetime
+- update_user_id

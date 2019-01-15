@@ -1,0 +1,27 @@
+Pelanggan
+- Pelanggan merupakan user pada aplikasi mobile pelanggan.
+- Pelanggan bisa saja bukan user aplikasi mobile hanya saja bisa di daftarkan sebagai pelanggan pada sebuah Perusahaan Laundry.
+- Penambahan Pelanggan di Perusahaan Laundry jika Pelanggan sudah mendaftar sebagai Pelanggan di aplikasi mobile 
+  adalah menggunakan scan QR Code maka otomatis terdaftar di Perusahaan Laundry tersebut.
+- Pelanggan setiap Perusahaan Laundry berbeda.
+- Penambahan Pelanggan di Perusahaan Laundry jika Pelanggan belum mendaftar sebagai Pelanggan di aplikasi mobile adalah dengan mengisi form, dan is_user = 0
+- Pelanggan yg sudah terdaftar di sistem bisa mendaftar ke masing2 usaha laundry dengan cara discan QRCode si Pelanggan oleh aplikasi laundry.
+- Pendaftaran pelanggan melalui form data secara DB ada di collection yg sama hanya di bedakan berdasarkan status is_user yes or no.
+- Saat Pelanggan didaftarkan melalui form lalu suatu hari ingin mendaftarkan diri di aplikasi pelanggan, maka user dengan status is_user = 0 akan mereplace berdasarkan email, 
+  dengan catatan user telah melakukan verifikasi email pengguna. ada status is_vefified di setiap user. 
+  semua transaksi yg melekat pada user email yg di verifikasi maka akan merubah id_user di transaksi yg telah menggunakan user_id yg sebelumnya blm terdaftar sebagai pengguna.
+  lalu update is_user = 1 dah hapus semua user yg akan di replace.
+- Ketika pengguna sudah registrasi di sistem, maka pihak laundry tidak bisa merubah data pengguna, 
+  indikasinya tombol edit akan hilang jika dia terdaftar sebagai penngguna. 
+  Dan jika bukan pengguna ketika dihapus dia akan menghilangkan data, jika dia pengguna maka dia hanya akan keluar dari list data member di laundry tersebut.
+
+
+Menu
+- Update Data, merupakan tombol untuk melakukan syncron anatara data di device dengan server. Data yg di syncron adalah data (Layanan, Kategori Layanan, Transaksi, Rekap Kas, Pengaturan)
+
+
+
+Fitur Pelanggan
+- Melihat riwayat transaksi laundry.
+- Mendapatkan Notif jika laundry sudah siap diambil.
+- 
