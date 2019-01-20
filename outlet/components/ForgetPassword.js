@@ -5,7 +5,7 @@ import Icons from 'react-native-vector-icons/MaterialIcons';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { Actions } from 'react-native-router-flux';
 import Functions from './lib/Functions';
-import { BASE_API } from './BaseApi';
+import Config from './config/Config';
 import axios from 'axios';
 
 export default class ForgetPassword extends Component {
@@ -36,7 +36,7 @@ export default class ForgetPassword extends Component {
                 </Header>
                 <Content>
                     <KeyboardAvoidingView style={styles.container}>
-                        <Spinner visible={this.state.showSpiner} textStyle={{color: '#FFF'}} />
+                        <Spinner visible={this.state.showSpiner} textStyle={{color: '#005c00'}} color='#005c00' />
                         <StatusBar barStyle="light-content" backgroundColor="#000000" />
                         <View style={styles.formContainer}>
                             <Text style={styles.title}>{Functions.langText('info_lupa_password', this.state.lang)}</Text>
@@ -68,7 +68,7 @@ export default class ForgetPassword extends Component {
         if(!Functions.isEmpty(this.state.email)){
             this.setState({showSpiner: true});
 
-            axios.post(BASE_API + 'user/forgotpassword', {
+            axios.post(Config.app.base_api + 'user/forgotpassword', {
                 email: this.state.email
             })
             .then(async (response) => {
@@ -105,7 +105,14 @@ export default class ForgetPassword extends Component {
 
             })
             .catch((error) => {
-                console.log(error);
+                this.setState({showSpiner: false});
+                Toast.show({
+                    text: Functions.langText('network_error', this.state.lang),
+                    textStyle: { textAlign: 'center', fontSize: 14 },
+                    duration: 3000,
+                    type: toastType,
+                    position: 'top'
+                })
             });
         }else{
             Toast.show({
@@ -129,15 +136,15 @@ const styles = StyleSheet.create({
     title: {
         marginVertical: 10,
         textAlign: 'left',
-        opacity: 0.9
+        color: '#404040'
     },
     input: {
         height: 30,
         marginBottom: 15,
         paddingHorizontal: 5,
         paddingVertical: 5,
-        borderBottomColor: '#929292',
-        borderBottomWidth: 0.5,
+        borderBottomColor: '#dddddd',
+        borderBottomWidth: 1,
         opacity: 0.9
     },
     buttonContainer: {

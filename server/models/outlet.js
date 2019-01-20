@@ -72,10 +72,17 @@ module.exports = {
         });
 
     },
-    getOutletByCompanyId(id){
+    getOutletByUser(user_id){
+
+        return connection.select('user_outlet').from('sil_user')
+        .where('user_id', '=', user_id);
+
+    },
+    getOutletByCompanyIdUserId(company_id, outlet){
 
         return connection.select().from('sil_outlet')
-        .where('outlet_company_id', '=', id);
+        .where('outlet_company_id', '=', company_id)
+        .whereIn('outlet_id', outlet);
 
     },
 }

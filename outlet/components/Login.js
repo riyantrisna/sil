@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, KeyboardAvo
 import { Toast } from 'native-base'
 import Spinner from 'react-native-loading-spinner-overlay';
 import { Actions } from 'react-native-router-flux';
-import { BASE_API } from './BaseApi';
+import Config from './config/Config';
 import axios from 'axios';
 import Functions from './lib/Functions';
 
@@ -23,7 +23,7 @@ export default class Login extends Component {
     render() {
         return (
             <KeyboardAvoidingView style={styles.container}>
-                <Spinner visible={this.state.showSpiner} textStyle={{color: '#FFF'}} />
+                <Spinner visible={this.state.showSpiner} textStyle={{color: '#FFF'}} color='#FFF' />
                 <View style={styles.logoContainer}>
                     <Image
                     style={styles.logo}
@@ -75,12 +75,12 @@ export default class Login extends Component {
         if(!Functions.isEmpty(this.state.email) && !Functions.isEmpty(this.state.password)){
             this.setState({showSpiner: true});
             
-            axios.post(BASE_API + 'login', {
+            axios.post(Config.app.base_api + 'login', {
                 email: this.state.email,
                 password: this.state.password,
             })
             .then(async (response) => {
-                console.log(response);
+                
                 this.setState({showSpiner: false});
 
                 if(response.data.status === '200'){
@@ -104,7 +104,7 @@ export default class Login extends Component {
 
             })
             .catch((error) => {
-                console.log(error);
+                
                 this.setState({showSpiner: false});
                 Toast.show({
                     text: Functions.langText('network_error', this.state.lang),

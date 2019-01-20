@@ -18,7 +18,8 @@ var lang =
         'pilihoutlet': 'Pilih Outlet',
         'gagal_load_data': 'Load data gagal',
         'network_error': 'Jaringan error',
-        'cari': 'Cari...'
+        'cari': 'Cari...',
+        'anda_telah_logout': 'Anda telah logout!'
     },
     'en': {
         'login': 'Login',
@@ -38,7 +39,8 @@ var lang =
         'pilihoutlet': 'Select Outlet',
         'gagal_load_data': 'Failed load data',
         'network_error': 'Network error',
-        'cari': 'Search...'
+        'cari': 'Search...',
+        'anda_telah_logout': 'You have logged out!'
     }
 };
 

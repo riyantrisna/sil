@@ -55,19 +55,13 @@ router.get('/outlet/:search', Functions.verifyToken, function(req, res, next){
 router.post('/outlet', Functions.verifyToken, async function(req, res, next){
 
     var data = {
-        outlet_company_id: req.body.company_id,
-        outlet_name: req.body.name,
-        outlet_email: req.body.email,
-        outlet_address: req.body.address,
-        outlet_gender: req.body.gender,
-        outlet_phone: req.body.phone,
-        outlet_last_login: req.body.last_login,
-        outlet_lang: req.body.lang,
-        outlet_status: req.body.status,
-        outlet_role: req.body.role,
-        outlet_type: req.body.type,
-        outlet_outlet: req.body.outlet,
-        insert_user_id: req.body.insert_outlet_id,
+        outlet_company_id: req.body.company_id, 
+        outlet_name: req.body.name, 
+        outlet_address: req.body.address, 
+        outlet_refcity_id: req.body.refcity_id, 
+        outlet_phone: req.body.phone, 
+        outlet_charge: req.body.charge,
+        insert_user_id: req.body.insert_user_id,
         insert_datetime: config.app.timezoneNow.format('YYYY-MM-DD HH:mm:ss'),
         update_user_id: null,
         update_datetime: null
@@ -95,18 +89,12 @@ router.post('/outlet', Functions.verifyToken, async function(req, res, next){
 router.put('/outlet/:id', Functions.verifyToken, async function(req, res, next){
 
     var data = {
-        outlet_company_id: req.body.company_id,
-        outlet_name: req.body.name,
-        outlet_email: req.body.email,
-        outlet_address: req.body.address,
-        outlet_gender: req.body.gender,
-        outlet_phone: req.body.phone,
-        outlet_last_login: req.body.last_login,
-        outlet_lang: req.body.lang,
-        outlet_status: req.body.status,
-        outlet_role: req.body.role,
-        outlet_type: req.body.type,
-        outlet_outlet: req.body.outlet,
+        outlet_company_id: req.body.company_id, 
+        outlet_name: req.body.name, 
+        outlet_address: req.body.address, 
+        outlet_refcity_id: req.body.refcity_id, 
+        outlet_phone: req.body.phone, 
+        outlet_charge: req.body.charge,
         update_datetime: config.app.timezoneNow.format('YYYY-MM-DD HH:mm:ss'),
         update_user_id: req.body.update_outlet_id
     }
@@ -153,9 +141,12 @@ router.get('/outletbycompanyid', Functions.verifyToken, async function(req, res,
     const bearer = bearerHeader.split(' ');
     const decoded = await jwt.decode(bearer[1]);
 
-    var id = decoded.user[0].user_company_id;
+    var company_id = decoded.user[0].user_company_id;
+    var user_id = decoded.user[0].user_id;
+    var outlet_str = await Outlet.getOutletByUser(user_id).then(result => result[0]['user_outlet']);
+    var outlet = outlet_str.split(",");
 
-    Outlet.getOutletByCompanyId(id).then(function(outlet){
+    await Outlet.getOutletByCompanyIdUserId(company_id, outlet).then(function(outlet){
 
         if(!Functions.isEmpty(outlet)){
             res.send({

@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, KeyboardAvoidingView, StatusBar, AsyncStorage, TextInput, FlatList, BackHandler } from 'react-native';
-import { Container, Content, Header, Body, Title, Toast, Right, Left, Button, Item, Input, Icon } from 'native-base';
+import { StyleSheet, Text, View, TouchableOpacity, StatusBar, AsyncStorage, TextInput, FlatList, BackHandler, RefreshControl } from 'react-native';
+import { Container, Content, Header, Body, Title, Toast, Right, Button } from 'native-base';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import IconsEntypo from 'react-native-vector-icons/Entypo';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { Actions } from 'react-native-router-flux';
 import Functions from './lib/Functions';
-import { BASE_API } from './BaseApi';
+import Config from './config/Config';
 import axios from 'axios';
 
 export default class Operator extends Component {
@@ -18,6 +18,7 @@ export default class Operator extends Component {
             lang: AsyncStorage.getItem('lang'),
             outlet: null,
             filterShow: false,
+            refreshing: false
         }
 
         this.arrayholder = null;
@@ -29,30 +30,42 @@ export default class Operator extends Component {
         this._loadOutlet();
     }
 
+    _onRefresh(){
+        this.setState({refreshing: true});
+        this._loadOutlet().then(() => {
+            this.setState({refreshing: false});
+        });
+    }
+
     render() {
         return (
             <Container style={styles.container}>
                 {this._headerComponent()}
                 <Content>
-                    <Spinner visible={this.state.showSpiner} textStyle={{color: '#FFF'}} />
+                    <Spinner visible={this.state.showSpiner} textStyle={{color: '#005c00'}} color='#005c00' />
                     <StatusBar barStyle="light-content" backgroundColor="#000000" />
                     <View>
                         <FlatList
                             data = {this.state.outlet}
-                            keyExtractor = {(x, i) => i.toString()}
+                            keyExtractor = {(i) => i.toString()}
                             renderItem = {({ item }) =>
-                                <TouchableOpacity onPress={() => { this._selectOutlet(item.outlet_name) }}>
-                                    <View style={{ flexDirection: "row", alignItems: "center", borderBottomColor: '#dddddd', borderBottomWidth: 1,}}>
-                                        <IconsEntypo name='shop' size={25} style={{padding: 20}} />
-                                        <Text style={{flex: 1, flexWrap: 'wrap', fontWeight: 'bold'}}>{item.outlet_name}</Text>
-                                        <Icons name='navigate-next' size={25} style={{padding: 20}} />
-                                    </View>
+                                <TouchableOpacity onPress={() => { this._selectOutlet(item.outlet_name) }} style={styles.listItem}>
+                                    <IconsEntypo name='shop' size={25} style={{padding: 20, color: '#404040'}} />
+                                    <Text style={styles.listText}>{item.outlet_name}</Text>
+                                    <Icons name='navigate-next' size={25} style={{padding: 20, color: '#404040'}} />
                                 </TouchableOpacity>
+                            }
+                            refreshControl = {
+                                <RefreshControl
+                                    refreshing = {this.state.refreshing}
+                                    onRefresh = {this._onRefresh.bind(this)}
+                                    colors={["#005c00"]}
+                                />
                             }
                         />
                     </View>
                 </Content>
-            </Container>
+            </Container> 
         )
     }
 
@@ -68,15 +81,7 @@ export default class Operator extends Component {
 
                     <TextInput 
                     placeholder={Functions.langText('cari', this.state.lang)}
-                    // style={styles.input} 
-                    style={{
-                        flex: 1,
-                        marginVertical: 0,
-                        marginHorizontal: 10,
-                        width: '80%',
-                        color: '#ffffff',
-                        opacity: 0.9
-                    }}
+                    style={styles.input}
                     autoCorrect={false}
                     autoCapitalize="none"
                     autoFocus = {true}
@@ -91,14 +96,6 @@ export default class Operator extends Component {
                     </Button>
                     
                 </Header>
-
-                // <Header searchBar>
-                //     <Item>
-                //         <Icon name='arrow-back' color="#ffffff" size={25} />
-                //         <Input placeholder="Search" />
-                //         <Icon name='arrow-back' color="#ffffff" size={25} />
-                //     </Item>
-                // </Header>
             )
         }else{
             return(
@@ -123,6 +120,7 @@ export default class Operator extends Component {
     
     _hideFilter = () => {
         this.setState({filterShow: false});
+        this._searchFilter('');
     }
 
     _clearFilter = () => {
@@ -156,7 +154,7 @@ export default class Operator extends Component {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer '+keys
             },
-            url: BASE_API + 'outletbycompanyid'
+            url: Config.app.base_api + 'outletbycompanyid'
         })
         .then((response) => {
             this.setState({showSpiner: false});
@@ -201,7 +199,7 @@ export default class Operator extends Component {
             this.setState({showSpiner: false});
             Actions.reset('login');
             Toast.show({
-                text: 'Anda telah logout!',
+                text: Functions.langText('anda_telah_logout', this.state.lang),
                 textStyle: { textAlign: 'center', fontSize: 14 },
                 duration: 3000,
                 type: 'warning',
@@ -221,11 +219,23 @@ const styles = StyleSheet.create({
         padding: 0
     },
     input: {
-        padding: 0,
-        width: '100%',
+        flex: 1,
+        marginVertical: 0,
+        marginHorizontal: 10,
+        width: '80%',
         color: '#ffffff',
-        borderBottomColor: '#929292',
-        borderBottomWidth: 1,
         opacity: 0.9
     },
+    listItem: {
+        flexDirection: "row", 
+        alignItems: "center", 
+        borderBottomColor: '#dddddd', 
+        borderBottomWidth: 1
+    },
+    listText: {
+        flex: 1, 
+        flexWrap: 'wrap', 
+        fontWeight: 'bold',
+        color: '#404040'
+    }
 });
