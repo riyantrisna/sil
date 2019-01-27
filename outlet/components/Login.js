@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, StatusBar, AsyncStorage } from 'react-native';
+import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, StatusBar, AsyncStorage, BackHandler, Alert } from 'react-native';
 import { Toast } from 'native-base'
 import Spinner from 'react-native-loading-spinner-overlay';
 import { Actions } from 'react-native-router-flux';
@@ -18,6 +18,10 @@ export default class Login extends Component {
             showToast: false,
             lang: AsyncStorage.getItem('lang')
         }
+    }
+
+    componentWillMount(){
+        BackHandler.addEventListener('hardwareBackPress', this._alertExit);
     }
 
     render() {
@@ -91,6 +95,7 @@ export default class Login extends Component {
                     let keys = await AsyncStorage.getItem('syek');
                     if(keys!==''){
                         Actions.reset('outlet');
+                        BackHandler.removeEventListener('hardwareBackPress', this._alertExit);
                     }
                 }else{
                     Toast.show({
@@ -139,6 +144,22 @@ export default class Login extends Component {
                 position: 'top'
             })
         }
+    }
+
+    _alertExit = () => {
+        Alert.alert(
+            '',
+            Functions.langText('keluar_app', this.state.lang)+'?',
+            [
+                {
+                    text: Functions.langText('batal', this.state.lang),
+                },
+                {
+                    text: Functions.langText('ok', this.state.lang), onPress: () => BackHandler.exitApp()
+                },
+            ],
+            {cancelable: true},
+          );
     }
 
 }

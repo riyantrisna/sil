@@ -19,7 +19,10 @@ var lang =
         'gagal_load_data': 'Load data gagal',
         'network_error': 'Jaringan error',
         'cari': 'Cari...',
-        'anda_telah_logout': 'Anda telah logout!'
+        'anda_telah_logout': 'Anda telah logout!',
+        'keluar_app': 'Keluar aplikasi',
+        'batal': 'Batal',
+        'ok': 'Oke'
     },
     'en': {
         'login': 'Login',
@@ -40,7 +43,10 @@ var lang =
         'gagal_load_data': 'Failed load data',
         'network_error': 'Network error',
         'cari': 'Search...',
-        'anda_telah_logout': 'You have logged out!'
+        'anda_telah_logout': 'You have logged out!',
+        'keluar_app': 'Exit application',
+        'batal': 'Cancel',
+        'ok': 'Ok'
     }
 };
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, StatusBar, AsyncStorage, TextInput, FlatList, BackHandler, RefreshControl } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, StatusBar, AsyncStorage, TextInput, FlatList, BackHandler, RefreshControl, Alert } from 'react-native';
 import { Container, Content, Header, Body, Title, Toast, Right, Button } from 'native-base';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import IconsEntypo from 'react-native-vector-icons/Entypo';
@@ -26,7 +26,7 @@ export default class Operator extends Component {
     }
 
     componentWillMount(){
-        BackHandler.addEventListener('hardwareBackPress', this._logout);
+        BackHandler.addEventListener('hardwareBackPress', this._alertExit);
         this._loadOutlet();
     }
 
@@ -194,8 +194,28 @@ export default class Operator extends Component {
         }
     }
 
+    _alertExit = () => {
+        Alert.alert(
+            '',
+            Functions.langText('keluar_app', this.state.lang)+'?',
+            [
+                {
+                    text: 'Logout', onPress: () => this._logout()
+                },
+                {
+                    text: Functions.langText('batal', this.state.lang),
+                },
+                {
+                    text: Functions.langText('ok', this.state.lang), onPress: () => BackHandler.exitApp()
+                },
+            ],
+            {cancelable: true},
+          );
+    }
+
     _logout = async () => {
         this.setState({showSpiner: true});
+        BackHandler.removeEventListener('hardwareBackPress', this._alertExit);
 
         await AsyncStorage.removeItem('syek');
         await AsyncStorage.removeItem('lang');
