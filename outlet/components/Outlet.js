@@ -146,45 +146,52 @@ export default class Operator extends Component {
 
     _loadOutlet = async () =>{
         let keys = await AsyncStorage.getItem('syek');
+
+        if(Functions.isEmpty(keys)){
+            
+            Actions.reset('login');
         
-        await axios({
-            method: 'GET',
-            headers: 
-            { 
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer '+keys
-            },
-            url: Config.app.base_api + 'outletbycompanyid'
-        })
-        .then((response) => {
-            this.setState({showSpiner: false});
+        }else{
 
-            if(response.data.status === '401'){
-                Actions.reset('login');
-                AsyncStorage.removeItem('syek');
-                AsyncStorage.removeItem('lang');
-                return null;
-            }else{
-                this.setState({
-                    outlet: response.data.data,
-                    showSpiner: false
-                });
-                this.arrayholder = response.data.data;
-            }
-        })
-        .catch((error) => {
-            Toast.show({
-                text: Functions.langText('gagal_load_data', this.state.lang),
-                textStyle: { textAlign: 'center', fontSize: 14 },
-                duration: 3000,
-                type: 'danger',
-                position: 'top'
+            await axios({
+                method: 'GET',
+                headers: 
+                { 
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer '+keys
+                },
+                url: Config.app.base_api + 'outletbycompanyid'
             })
-
-            this.setState({showSpiner: false});
-            return null;
-        });
-
+            .then((response) => {
+                this.setState({showSpiner: false});
+    
+                if(response.data.status === '401'){
+                    Actions.reset('login');
+                    AsyncStorage.removeItem('syek');
+                    AsyncStorage.removeItem('lang');
+                    return null;
+                }else{
+                    this.setState({
+                        outlet: response.data.data,
+                        showSpiner: false
+                    });
+                    this.arrayholder = response.data.data;
+                }
+            })
+            .catch((error) => {
+                Toast.show({
+                    text: Functions.langText('gagal_load_data', this.state.lang),
+                    textStyle: { textAlign: 'center', fontSize: 14 },
+                    duration: 3000,
+                    type: 'danger',
+                    position: 'top'
+                })
+    
+                this.setState({showSpiner: false});
+                return null;
+            });
+            
+        }
     }
 
     _logout = async () => {
