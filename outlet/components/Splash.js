@@ -8,15 +8,39 @@ export default class Splash extends Component {
         super(props);
 
         this.state = {
-            lang: AsyncStorage.getItem('lang')
+            users: {
+                syek: '',
+                lang: ''
+            }
         }
+    }
+
+    async componentWillMount(){
+
+        await AsyncStorage.getItem('users').then((data) => {
+            if(!Functions.isEmpty(data)){
+                var datas = JSON.parse(data);
+                this.setState({
+                    users: {
+                        syek: datas.syek,
+                        lang: datas.lang
+                    }
+                });
+            }
+        });
 
         setTimeout(async () => {
 
-            let keys = await AsyncStorage.getItem('syek');
+            let outletId = await AsyncStorage.getItem('outletId');
 
-            if(!Functions.isEmpty(keys)){
-                Actions.reset('outlet');
+            if(!Functions.isEmpty(this.state.users.syek)){
+                
+                if(!Functions.isEmpty(outletId)){
+                    Actions.reset('drawer');
+                }else{
+                    Actions.reset('outlet');
+                }
+                
             }else{
                 Actions.reset('login');
             }

@@ -22,7 +22,9 @@ var lang =
         'anda_telah_logout': 'Anda telah logout!',
         'keluar_app': 'Keluar aplikasi',
         'batal': 'Batal',
-        'ok': 'Oke'
+        'ok': 'Oke',
+        'transaksi': 'Transaksi',
+        'setting': 'Setting'
     },
     'en': {
         'login': 'Login',
@@ -46,7 +48,9 @@ var lang =
         'anda_telah_logout': 'You have logged out!',
         'keluar_app': 'Exit application',
         'batal': 'Cancel',
-        'ok': 'Ok'
+        'ok': 'Ok',
+        'transaksi': 'Transaction',
+        'setting': 'Setting'
     }
 };
 

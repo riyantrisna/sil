@@ -1,5 +1,6 @@
 const moment = require('moment');
 const Lang = require('./Lang');
+import { AsyncStorage } from 'react-native';
 
 module.exports = {
 
@@ -21,7 +22,7 @@ module.exports = {
         }else if(userLang==='en'){
             return Lang['en'][strs];
         }else{
-            return Lang['id'][strs];
+            return Lang['en'][strs];
         }
-    },
+    }
 };

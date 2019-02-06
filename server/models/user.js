@@ -5,8 +5,9 @@ module.exports = {
 
         return connection('sil_user').where({
             user_email: email,
-            user_password:  password
-        }).select('user_id', 'user_email', 'user_password', 'user_lang', 'user_company_id').limit(1);
+            user_password:  password,
+            user_type: 1
+        }).select('user_id', 'user_company_id', 'user_email', 'user_name', {lang: 'user_lang'}, 'user_img').limit(1);
 
     },
     updateUserLastLogin(email, data){

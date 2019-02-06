@@ -16,7 +16,9 @@ export default class ForgetPassword extends Component {
             email: '',
             showSpiner: false,
             showToast: false,
-            lang: AsyncStorage.getItem('lang')
+            users: {
+                lang: ''
+            }
         }
     }
 
@@ -30,7 +32,7 @@ export default class ForgetPassword extends Component {
                         </Button>
                     </Left>
                     <Body>
-                        <Title>{Functions.langText('lupapassword', this.state.lang)}</Title>
+                        <Title>{Functions.langText('lupapassword', this.state.users.lang)}</Title>
                     </Body>
                     <Right />
                 </Header>
@@ -39,9 +41,9 @@ export default class ForgetPassword extends Component {
                         <Spinner visible={this.state.showSpiner} textStyle={{color: '#005c00'}} color='#005c00' />
                         <StatusBar barStyle="light-content" backgroundColor="#000000" />
                         <View style={styles.formContainer}>
-                            <Text style={styles.title}>{Functions.langText('info_lupa_password', this.state.lang)}</Text>
+                            <Text style={styles.title}>{Functions.langText('info_lupa_password', this.state.users.lang)}</Text>
                             <TextInput
-                                placeholder={Functions.langText('email', this.state.lang)}
+                                placeholder={Functions.langText('email', this.state.users.lang)}
                                 returnKeyType="go"
                                 autoCapitalize="none"
                                 autoCorrect={false}
@@ -52,7 +54,7 @@ export default class ForgetPassword extends Component {
                             />
 
                             <TouchableOpacity onPress={this._sendEmail} style={styles.buttonContainer}>
-                                <Text style={styles.buttonText}>{Functions.langText('kirim', this.state.lang)}</Text>
+                                <Text style={styles.buttonText}>{Functions.langText('kirim', this.state.users.lang)}</Text>
                             </TouchableOpacity>
                         </View>
                     </KeyboardAvoidingView>
@@ -79,7 +81,7 @@ export default class ForgetPassword extends Component {
                     toastType = 'success';
 
                     Toast.show({
-                        text: Functions.langText('password_terkirim', this.state.lang),
+                        text: Functions.langText('password_terkirim', this.state.users.lang),
                         textStyle: { textAlign: 'center', fontSize: 14 },
                         duration: 3000,
                         type: toastType,
@@ -87,7 +89,7 @@ export default class ForgetPassword extends Component {
                     })
                 }else if(response.data.status === '500'){
                     Toast.show({
-                        text: Functions.langText('validasi_email_gagal_dikirim', this.state.lang),
+                        text: Functions.langText('validasi_email_gagal_dikirim', this.state.users.lang),
                         textStyle: { textAlign: 'center', fontSize: 14 },
                         duration: 3000,
                         type: toastType,
@@ -95,7 +97,7 @@ export default class ForgetPassword extends Component {
                     })
                 }else{
                     Toast.show({
-                        text: Functions.langText('validasi_email_salah', this.state.lang),
+                        text: Functions.langText('validasi_email_salah', this.state.users.lang),
                         textStyle: { textAlign: 'center', fontSize: 14 },
                         duration: 3000,
                         type: toastType,
@@ -107,7 +109,7 @@ export default class ForgetPassword extends Component {
             .catch((error) => {
                 this.setState({showSpiner: false});
                 Toast.show({
-                    text: Functions.langText('network_error', this.state.lang),
+                    text: Functions.langText('network_error', this.state.users.lang),
                     textStyle: { textAlign: 'center', fontSize: 14 },
                     duration: 3000,
                     type: toastType,
@@ -116,7 +118,7 @@ export default class ForgetPassword extends Component {
             });
         }else{
             Toast.show({
-                text: Functions.langText('validasi_email', this.state.lang),
+                text: Functions.langText('validasi_email', this.state.users.lang),
                 textStyle: { textAlign: 'center', fontSize: 14 },
                 duration: 3000,
                 type: toastType,

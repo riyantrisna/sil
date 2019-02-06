@@ -15,14 +15,18 @@ export default class Operator extends Component {
         super(props);
         this.state = {
             showSpiner: true,
-            lang: AsyncStorage.getItem('lang'),
             outlet: null,
             filterShow: false,
-            refreshing: false
+            refreshing: false,
+            users: {},
         }
 
-        this.arrayholder = null;
+        this.arrayoutlet = null;
         
+    }
+
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this._alertExit);
     }
 
     componentWillMount(){
@@ -47,9 +51,9 @@ export default class Operator extends Component {
                     <View>
                         <FlatList
                             data = {this.state.outlet}
-                            keyExtractor = {(i) => i.toString()}
+                            keyExtractor={(item, index) => item.outlet_id}
                             renderItem = {({ item }) =>
-                                <TouchableOpacity onPress={() => { this._selectOutlet(item.outlet_name) }} style={styles.listItem}>
+                                <TouchableOpacity onPress={() => { this._selectOutlet(item.outlet_id) }} style={styles.listItem}>
                                     <IconsEntypo name='shop' size={25} style={{padding: 20, color: '#404040'}} />
                                     <Text style={styles.listText}>{item.outlet_name}</Text>
                                     <Icons name='navigate-next' size={25} style={{padding: 20, color: '#404040'}} />
@@ -80,7 +84,7 @@ export default class Operator extends Component {
                     </Button>
 
                     <TextInput 
-                    placeholder={Functions.langText('cari', this.state.lang)}
+                    placeholder={Functions.langText('cari', this.state.users.lang)}
                     style={styles.input}
                     autoCorrect={false}
                     autoCapitalize="none"
@@ -101,7 +105,7 @@ export default class Operator extends Component {
             return(
                 <Header style={styles.headerText}>
                     <Body style={{paddingLeft: 15}}>
-                        <Title>{Functions.langText('pilihoutlet', this.state.lang)}</Title>
+                        <Title>{Functions.langText('pilihoutlet', this.state.users.lang)}</Title>
                     </Body>
                     <Right>
                         <Button transparent onPress={this._showFilter}>
@@ -129,8 +133,7 @@ export default class Operator extends Component {
     }
 
     _searchFilter = (text) => {
-        const newData = this.arrayholder.filter(item => {
-            console.log(text);
+        const newData = this.arrayoutlet.filter(item => {
             const itemData = `${item.outlet_name.toUpperCase()}`;
             const textData = text.toUpperCase();
             return itemData.indexOf(textData) > -1;
@@ -140,14 +143,23 @@ export default class Operator extends Component {
         });
     }
 
-    _selectOutlet = (text) => {
-        alert(text);
+    _selectOutlet = (outletId) => {
+        AsyncStorage.setItem('outletId', outletId);
+        Actions.reset('drawer');
     }
 
     _loadOutlet = async () =>{
-        let keys = await AsyncStorage.getItem('syek');
 
-        if(Functions.isEmpty(keys)){
+        await AsyncStorage.getItem('users').then((data) => {
+            if(!Functions.isEmpty(data)){
+                var datas = JSON.parse(data);
+                this.setState({
+                    users: datas
+                });
+            }
+        });
+
+        if(Functions.isEmpty(this.state.users.syek)){
             
             Actions.reset('login');
         
@@ -158,7 +170,7 @@ export default class Operator extends Component {
                 headers: 
                 { 
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer '+keys
+                    'Authorization': 'Bearer '+this.state.users.syek
                 },
                 url: Config.app.base_api + 'outletbycompanyid'
             })
@@ -167,20 +179,18 @@ export default class Operator extends Component {
     
                 if(response.data.status === '401'){
                     Actions.reset('login');
-                    AsyncStorage.removeItem('syek');
-                    AsyncStorage.removeItem('lang');
                     return null;
                 }else{
                     this.setState({
                         outlet: response.data.data,
                         showSpiner: false
                     });
-                    this.arrayholder = response.data.data;
+                    this.arrayoutlet = response.data.data;
                 }
             })
             .catch((error) => {
                 Toast.show({
-                    text: Functions.langText('gagal_load_data', this.state.lang),
+                    text: Functions.langText('gagal_load_data', this.state.users.lang),
                     textStyle: { textAlign: 'center', fontSize: 14 },
                     duration: 3000,
                     type: 'danger',
@@ -197,44 +207,21 @@ export default class Operator extends Component {
     _alertExit = () => {
         Alert.alert(
             '',
-            Functions.langText('keluar_app', this.state.lang)+'?',
+            Functions.langText('keluar_app', this.state.users.lang)+'?',
             [
                 {
-                    text: 'Logout', onPress: () => this._logout()
+                    text: 'Logout', onPress: () => Actions.reset('login')
                 },
                 {
-                    text: Functions.langText('batal', this.state.lang),
+                    text: Functions.langText('batal', this.state.users.lang),
                 },
                 {
-                    text: Functions.langText('ok', this.state.lang), onPress: () => BackHandler.exitApp()
+                    text: Functions.langText('ok', this.state.users.lang), onPress: () => BackHandler.exitApp()
                 },
             ],
             {cancelable: true},
           );
     }
-
-    _logout = async () => {
-        this.setState({showSpiner: true});
-        BackHandler.removeEventListener('hardwareBackPress', this._alertExit);
-
-        await AsyncStorage.removeItem('syek');
-        await AsyncStorage.removeItem('lang');
-
-        let keys = await AsyncStorage.getItem('syek');
-
-        if(Functions.isEmpty(keys)){
-            this.setState({showSpiner: false});
-            Actions.reset('login');
-            Toast.show({
-                text: Functions.langText('anda_telah_logout', this.state.lang),
-                textStyle: { textAlign: 'center', fontSize: 14 },
-                duration: 3000,
-                type: 'warning',
-                position: 'top'
-            });
-        }     
-    }
-
 }
 
 const styles = StyleSheet.create({

@@ -162,11 +162,11 @@ router.post('/login', function(req, res, next){
             User.updateUserLastLogin(email, {user_last_login: config.app.timezoneNow.format('YYYY-MM-DD HH:mm:ss')});
 
             jwt.sign({user}, 'sil', { expiresIn: '24H'}, function(err, token){
+                user[0].syek = token;
                 res.json({
                     status: '200',
                     message: 'sukses',
-                    token: token,
-                    lang: user[0].user_lang
+                    data: user[0]
                 });
             });
             

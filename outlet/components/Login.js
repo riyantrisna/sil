@@ -16,8 +16,17 @@ export default class Login extends Component {
             password: '',
             showSpiner: false,
             showToast: false,
-            lang: AsyncStorage.getItem('lang')
+            users: {
+                lang: ''
+            }
         }
+
+        AsyncStorage.removeItem('users');
+        AsyncStorage.removeItem('outletId');
+    }
+
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this._alertExit);
     }
 
     componentWillMount(){
@@ -33,12 +42,12 @@ export default class Login extends Component {
                     style={styles.logo}
                     source={require('../assets/img/logo_white.png')}
                     />
-                    <Text style={styles.title}>{Functions.langText('slogan', this.state.lang)}</Text>
+                    <Text style={styles.title}>{Functions.langText('slogan', this.state.users.lang)}</Text>
                 </View>
                 <View style={styles.formContainer}>
                     <StatusBar barStyle="light-content" backgroundColor="#000000" />
                     <TextInput
-                    placeholder={Functions.langText('email', this.state.lang)}
+                    placeholder={Functions.langText('email', this.state.users.lang)}
                     placeholderTextColor="rgba(255,255,255,0.7)"
                     returnKeyType="next"
                     onSubmitEditing={() => this.passwordInput.focus()}
@@ -51,7 +60,7 @@ export default class Login extends Component {
                     onChangeText={(email) => this.setState({email})}
                     />
                     <TextInput
-                    placeholder={Functions.langText('password', this.state.lang)}
+                    placeholder={Functions.langText('password', this.state.users.lang)}
                     placeholderTextColor="rgba(255,255,255,0.7)"
                     returnKeyType="go"
                     onSubmitEditing={this._login}
@@ -62,10 +71,10 @@ export default class Login extends Component {
                     onChangeText={(password) => this.setState({password})}
                     />
                     <TouchableOpacity onPress={this._login} style={styles.buttonContainer}>
-                        <Text style={styles.buttonText}>{Functions.langText('login', this.state.lang)}</Text>
+                        <Text style={styles.buttonText}>{Functions.langText('login', this.state.users.lang)}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => { Actions.forgetpassword() }}>
-                        <Text style={styles.textForgotPassword}>{Functions.langText('lupapassword', this.state.lang)}?</Text>
+                        <Text style={styles.textForgotPassword}>{Functions.langText('lupapassword', this.state.users.lang)}?</Text>
                     </TouchableOpacity>
                 </View>
             </KeyboardAvoidingView>
@@ -89,17 +98,28 @@ export default class Login extends Component {
 
                 if(response.data.status === '200'){
                     toastType = 'success';
-                    await AsyncStorage.setItem('syek', response.data.token);
-                    await AsyncStorage.setItem('lang', response.data.lang);
 
-                    let keys = await AsyncStorage.getItem('syek');
-                    if(keys!==''){
+                    await AsyncStorage.setItem('users', JSON.stringify(response.data.data));
+
+                    await AsyncStorage.getItem('users').then((data) => {
+                        if(!Functions.isEmpty(data)){
+                            var datas = JSON.parse(data);
+                            this.setState({
+                                users: {
+                                    syek: datas.syek
+                                }
+                            });
+                        }
+                    });
+
+                    if(!Functions.isEmpty(this.state.users.syek)){
                         Actions.reset('outlet');
-                        BackHandler.removeEventListener('hardwareBackPress', this._alertExit);
+                    }else{
+                        Actions.reset('login'); 
                     }
                 }else{
                     Toast.show({
-                        text: Functions.langText('validasi_email_password_salah', this.state.lang),
+                        text: Functions.langText('validasi_email_password_salah', this.state.users.lang),
                         textStyle: { textAlign: 'center', fontSize: 14 },
                         duration: 3000,
                         type: toastType,
@@ -112,7 +132,7 @@ export default class Login extends Component {
                 
                 this.setState({showSpiner: false});
                 Toast.show({
-                    text: Functions.langText('network_error', this.state.lang),
+                    text: Functions.langText('network_error', this.state.users.lang),
                     textStyle: { textAlign: 'center', fontSize: 14 },
                     duration: 3000,
                     type: toastType,
@@ -121,7 +141,7 @@ export default class Login extends Component {
             });
         }else if(Functions.isEmpty(this.state.email) && !Functions.isEmpty(this.state.password)){
             Toast.show({
-                text: Functions.langText('validasi_email', this.state.lang),
+                text: Functions.langText('validasi_email', this.state.users.lang),
                 textStyle: { textAlign: 'center', fontSize: 14 },
                 duration: 3000,
                 type: toastType,
@@ -129,7 +149,7 @@ export default class Login extends Component {
             })
         }else if(!Functions.isEmpty(this.state.email) && Functions.isEmpty(this.state.password)){
             Toast.show({
-                text: Functions.langText('validasi_password', this.state.lang),
+                text: Functions.langText('validasi_password', this.state.users.lang),
                 textStyle: { textAlign: 'center', fontSize: 14 },
                 duration: 3000,
                 type: toastType,
@@ -137,7 +157,7 @@ export default class Login extends Component {
             })
         }else{
             Toast.show({
-                text: Functions.langText('validasi_email_password', this.state.lang),
+                text: Functions.langText('validasi_email_password', this.state.users.lang),
                 textStyle: { textAlign: 'center', fontSize: 14 },
                 duration: 3000,
                 type: toastType,
@@ -149,13 +169,13 @@ export default class Login extends Component {
     _alertExit = () => {
         Alert.alert(
             '',
-            Functions.langText('keluar_app', this.state.lang)+'?',
+            Functions.langText('keluar_app', this.state.users.lang)+'?',
             [
                 {
-                    text: Functions.langText('batal', this.state.lang),
+                    text: Functions.langText('batal', this.state.users.lang),
                 },
                 {
-                    text: Functions.langText('ok', this.state.lang), onPress: () => BackHandler.exitApp()
+                    text: Functions.langText('ok', this.state.users.lang), onPress: () => BackHandler.exitApp()
                 },
             ],
             {cancelable: true},
